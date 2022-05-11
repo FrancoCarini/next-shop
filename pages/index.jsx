@@ -1,5 +1,8 @@
 import ShopLayout from '@/components/layouts/ShopLayout'
+import { initialData } from '@/database/products'
 import { Typography } from '@mui/material'
+
+import ProductList from '@/components/products/ProductList'
 
 export default function Home() {
   return (
@@ -10,6 +13,7 @@ export default function Home() {
       <Typography variant="h2" sx={{ marginBottom: 1 }}>
         All Products
       </Typography>
+      <ProductList products={initialData.products} />
     </ShopLayout>
   )
 }
