@@ -1,14 +1,13 @@
 import ShopLayout from '@/components/layouts/ShopLayout'
-import { initialData } from '@/database/products'
 import { Box, Button, Chip, Grid, Typography } from '@mui/material'
 
 import ProductSlideshow from '@/components/products/ProductSlideshow'
 import ItemCounter from '@/components/ui/ItemCounter'
 import SizeSelector from '@/components/products/SizeSelector'
+import { connect, disconnect } from '@/database/db'
+import Product from '@/models/Product'
 
-const product = initialData.products[0]
-
-const ProductPage = () => {
+const ProductPage = ({ product }) => {
   return (
     <ShopLayout title={product.title} pageDescription={product.description}>
       <Grid container spacing={3}>
@@ -47,6 +46,28 @@ const ProductPage = () => {
       </Grid>
     </ShopLayout>
   )
+}
+
+export const getServerSideProps = async ({ params }) => {
+  const { slug } = params
+  await connect()
+  const product = await Product.findOne({ slug }).lean()
+  await disconnect()
+
+  if (!product) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    }
+  }
+
+  return {
+    props: {
+      product: JSON.parse(JSON.stringify(product)),
+    },
+  }
 }
 
 export default ProductPage
