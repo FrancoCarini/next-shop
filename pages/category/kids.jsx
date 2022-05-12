@@ -5,11 +5,14 @@ import ProductList from '@/components/products/ProductList'
 import useProducts from '@/hooks/useProducts'
 import FullScreenLoading from '@/components/ui/FullScreenLoading'
 
-export default function Home() {
-  const { products, isLoading } = useProducts('products')
+export default function KidsPage() {
+  const { products, isLoading } = useProducts('products?gender=kid')
 
   return (
-    <ShopLayout title={'Teslo-Shop'} pageDescription={'Find the best products'}>
+    <ShopLayout
+      title={'Teslo-Shop - Kids'}
+      pageDescription={'Find the best products for kids'}
+    >
       <Typography variant="h1" component="h1">
         Store
       </Typography>

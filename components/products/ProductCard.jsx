@@ -14,9 +14,10 @@ const ProductCard = ({ product }) => {
   const { images, title, price } = product
 
   const [isHovered, setisHovered] = useState(false)
+  const [isImageLoaded, setisImageLoaded] = useState(false)
 
   const productImage = useMemo(() => {
-    return isHovered ? `products/${images[1]}` : `products/${images[0]}`
+    return isHovered ? `/products/${images[1]}` : `/products/${images[0]}`
   }, [isHovered, images])
 
   return (
@@ -36,12 +37,16 @@ const ProductCard = ({ product }) => {
                 image={productImage}
                 alt={title}
                 className="fadeIn"
+                onLoad={() => setisImageLoaded(true)}
               />
             </CardActionArea>
           </Link>
         </NextLink>
       </Card>
-      <Box sx={{ mt: 1 }} className="fadeIn">
+      <Box
+        sx={{ mt: 1, display: isImageLoaded ? 'block' : 'none' }}
+        className="fadeIn"
+      >
         <Typography fontWeight={700}>{title}</Typography>
         <Typography fontWeight={500}>{`$${price}`}</Typography>
       </Box>
