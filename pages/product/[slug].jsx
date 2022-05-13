@@ -29,13 +29,13 @@ const ProductPage = ({ product }) => {
               <SizeSelector sizes={product.sizes} />
             </Box>
 
-            <Button color="secondary" className="circular-btn">
-              Add to Cart
-            </Button>
-
-            {/** 
+            {product.inStock > 0 ? (
+              <Button color="secondary" className="circular-btn">
+                Add to Cart
+              </Button>
+            ) : (
               <Chip label="Not Available" color="error" variant="outlined" />
-            */}
+            )}
 
             <Box sx={{ mt: 3 }}>
               <Typography variant="subtitle2">Description</Typography>

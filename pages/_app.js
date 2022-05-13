@@ -3,6 +3,7 @@ import { ThemeProvider, CssBaseline } from '@mui/material'
 import { SWRConfig } from 'swr'
 
 import UiProvider from '@/context/ui/UiProvider'
+import CartProvider from '@/context/cart/CartProvider'
 import lightTheme from '@/themes/light-theme'
 
 function MyApp({ Component, pageProps }) {
@@ -13,12 +14,14 @@ function MyApp({ Component, pageProps }) {
           fetch(resource, init).then((res) => res.json()),
       }}
     >
-      <UiProvider>
-        <ThemeProvider theme={lightTheme}>
-          <CssBaseline />
-          <Component {...pageProps} />
-        </ThemeProvider>
-      </UiProvider>
+      <CartProvider>
+        <UiProvider>
+          <ThemeProvider theme={lightTheme}>
+            <CssBaseline />
+            <Component {...pageProps} />
+          </ThemeProvider>
+        </UiProvider>
+      </CartProvider>
     </SWRConfig>
   )
 }

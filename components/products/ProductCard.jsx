@@ -8,6 +8,7 @@ import {
   CardMedia,
   Grid,
   Link,
+  Chip,
 } from '@mui/material'
 
 const ProductCard = ({ product }) => {
@@ -32,6 +33,18 @@ const ProductCard = ({ product }) => {
         <NextLink href={`/product/${product.slug}`} passHref prefetch={false}>
           <Link>
             <CardActionArea>
+              {product.inStock <= 0 && (
+                <Chip
+                  color="primary"
+                  label="No Stock"
+                  sx={{
+                    position: 'absolute',
+                    zIndex: 99,
+                    top: '10px',
+                    left: '10px',
+                  }}
+                ></Chip>
+              )}
               <CardMedia
                 component="img"
                 image={productImage}
