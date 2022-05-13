@@ -1,6 +1,6 @@
 import { Box, Button } from '@mui/material'
 
-const SizeSelector = ({ selectedSize, sizes }) => {
+const SizeSelector = ({ selectedSize, sizes, onSelectedSize }) => {
   return (
     <Box>
       {sizes.map((size) => (
@@ -8,6 +8,7 @@ const SizeSelector = ({ selectedSize, sizes }) => {
           key={size}
           size="small"
           color={selectedSize === size ? 'primary' : 'info'}
+          onClick={() => onSelectedSize(size)}
         >
           {size}
         </Button>

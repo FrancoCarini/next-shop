@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useContext } from 'react'
 import NextLink from 'next/link'
 import {
   Grid,
@@ -9,26 +9,27 @@ import {
   Typography,
   Button,
 } from '@mui/material'
-import { initialData } from '@/database/products'
 import ItemCounter from '../ui/ItemCounter'
-
-const productsInCart = [
-  initialData.products[0],
-  initialData.products[1],
-  initialData.products[2],
-]
+import CartContext from '@/context/cart/CartContext'
 
 const CartList = ({ editable }) => {
+  const { cart } = useContext(CartContext)
+
   return (
     <Fragment>
-      {productsInCart.map((product) => (
-        <Grid key={product.slug} container spacing={2} sx={{ mb: 1 }}>
+      {cart.map((product) => (
+        <Grid
+          key={`${product.slug}-${product.size}`}
+          container
+          spacing={2}
+          sx={{ mb: 1 }}
+        >
           <Grid item xs={3}>
-            <NextLink href="/product/slug" passHref>
+            <NextLink href={`/product/slug/${product.slug}`} passHref>
               <Link>
                 <CardActionArea>
                   <CardMedia
-                    image={`/products/${product.images[0]}`}
+                    image={`/products/${product.image}`}
                     component="img"
                     sx={{ borderRadius: '5px' }}
                   />
@@ -40,11 +41,17 @@ const CartList = ({ editable }) => {
             <Box display="flex" flexDirection="column">
               <Typography variant="body1">{product.title}</Typography>
               <Typography component="div" variant="body1">
-                Size: <strong>M</strong>
+                Size: <strong>{product.size}</strong>
                 {editable ? (
-                  <ItemCounter />
+                  <ItemCounter
+                    currentValue={product.quantity}
+                    maxValue={product.inStock}
+                    onUpdateQuantity={() => {}}
+                  />
                 ) : (
-                  <Typography variant="h5">3 items</Typography>
+                  <Typography variant="h5">
+                    {product.quantity} item(s)
+                  </Typography>
                 )}
               </Typography>
             </Box>
