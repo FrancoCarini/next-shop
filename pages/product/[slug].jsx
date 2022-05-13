@@ -48,8 +48,29 @@ const ProductPage = ({ product }) => {
   )
 }
 
-export const getServerSideProps = async ({ params }) => {
-  const { slug } = params
+export const getStaticPaths = async () => {
+  await connect()
+
+  const productSlugs = await Product.find().select('slug -_id').lean()
+  await disconnect()
+
+  const slugsArray = productSlugs.map((slug) => {
+    return {
+      params: {
+        slug: slug.slug,
+      },
+    }
+  })
+
+  return {
+    paths: slugsArray,
+    fallback: 'blocking',
+  }
+}
+
+export const getStaticProps = async ({ params }) => {
+  const { slug = '' } = params
+
   await connect()
   const product = await Product.findOne({ slug }).lean()
   await disconnect()
@@ -67,6 +88,7 @@ export const getServerSideProps = async ({ params }) => {
     props: {
       product: JSON.parse(JSON.stringify(product)),
     },
+    revalidate: 60 * 60 * 24,
   }
 }
 

@@ -56,9 +56,6 @@ const Navbar = () => {
         </Box>
 
         <Box flex={1} />
-        <IconButton>
-          <SearchOutlined />
-        </IconButton>
         <NextLink href="/cart" passHref>
           <Link>
             <IconButton>
