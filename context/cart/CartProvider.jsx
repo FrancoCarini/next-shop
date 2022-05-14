@@ -10,14 +10,14 @@ const CartProvider = ({ children }) => {
   }
   const [state, dispatch] = useReducer(CartReducer, initialState)
 
-  // useEffect(() => {
-  //   const cookieCart = Cookie.get('cart') ? JSON.parse(Cookie.get('cart')) : []
+  useEffect(() => {
+    const cookieCart = Cookie.get('cart') ? JSON.parse(Cookie.get('cart')) : []
 
-  //   dispatch({
-  //     type: 'CART_LOAD_FROM_COOKIE',
-  //     payload: cookieCart,
-  //   })
-  // }, [])
+    dispatch({
+      type: 'CART_LOAD_FROM_COOKIE',
+      payload: cookieCart,
+    })
+  }, [])
 
   useEffect(() => {
     Cookie.set('cart', JSON.stringify(state.cart))
@@ -30,8 +30,24 @@ const CartProvider = ({ children }) => {
     })
   }
 
+  const removeProduct = (product) => {
+    dispatch({
+      type: 'CART_REMOVE_PRODUCT',
+      payload: product,
+    })
+  }
+
+  const updateQuantity = (product) => {
+    dispatch({
+      type: 'CART_UPDATE_PRODUCT_QUANTITY',
+      payload: product,
+    })
+  }
+
   return (
-    <CartContext.Provider value={{ ...state, addProduct }}>
+    <CartContext.Provider
+      value={{ ...state, addProduct, updateQuantity, removeProduct }}
+    >
       {children}
     </CartContext.Provider>
   )

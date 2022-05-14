@@ -13,7 +13,16 @@ import ItemCounter from '../ui/ItemCounter'
 import CartContext from '@/context/cart/CartContext'
 
 const CartList = ({ editable }) => {
-  const { cart } = useContext(CartContext)
+  const { cart, updateQuantity, removeProduct } = useContext(CartContext)
+
+  const newProductQuantity = (product, newQuantity) => {
+    product.quantity = newQuantity
+    updateQuantity(product)
+  }
+
+  const removeCartProduct = (product) => {
+    removeProduct(product)
+  }
 
   return (
     <Fragment>
@@ -46,7 +55,9 @@ const CartList = ({ editable }) => {
                   <ItemCounter
                     currentValue={product.quantity}
                     maxValue={product.inStock}
-                    onUpdateQuantity={() => {}}
+                    onUpdateQuantity={(newQuantity) =>
+                      newProductQuantity(product, newQuantity)
+                    }
                   />
                 ) : (
                   <Typography variant="h5">
@@ -65,7 +76,11 @@ const CartList = ({ editable }) => {
           >
             <Typography variant="subtitle1">{`$${product.price}`}</Typography>
             {editable && (
-              <Button variant="text" color="secondary">
+              <Button
+                variant="text"
+                color="secondary"
+                onClick={() => removeCartProduct(product)}
+              >
                 Remove
               </Button>
             )}

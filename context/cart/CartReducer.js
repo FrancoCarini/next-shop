@@ -39,6 +39,30 @@ const CartReducer = (state, action) => {
         ...state,
         cart: action.payload,
       }
+    case 'CART_UPDATE_PRODUCT_QUANTITY':
+      return {
+        ...state,
+        cart: state.cart.map((product) => {
+          if (
+            product._id === action.payload._id &&
+            product.size === action.payload.size
+          ) {
+            return action.payload
+          }
+          return product
+        }),
+      }
+    case 'CART_REMOVE_PRODUCT':
+      return {
+        ...state,
+        cart: state.cart.filter(
+          (product) =>
+            !(
+              product._id === action.payload._id &&
+              product.size === action.payload.size
+            )
+        ),
+      }
     default:
       return state
   }
