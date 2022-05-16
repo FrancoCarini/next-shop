@@ -7,6 +7,10 @@ import CartReducer from './CartReducer'
 const CartProvider = ({ children }) => {
   const initialState = {
     cart: Cookie.get('cart') ? JSON.parse(Cookie.get('cart')) : [],
+    numberOfItems: 0,
+    subTotal: 0,
+    tax: 0,
+    total: 0,
   }
   const [state, dispatch] = useReducer(CartReducer, initialState)
 
@@ -21,6 +25,29 @@ const CartProvider = ({ children }) => {
 
   useEffect(() => {
     Cookie.set('cart', JSON.stringify(state.cart))
+  }, [state.cart])
+
+  useEffect(() => {
+    const numberOfItems = state.cart.reduce(
+      (prev, current) => current.quantity + prev,
+      0
+    )
+    const subTotal = state.cart.reduce(
+      (prev, current) => current.price * current.quantity + prev,
+      0
+    )
+    const tax = Number(process.env.NEXT_PUBLIC_TAX_RATE) * subTotal
+    const total = subTotal + tax
+
+    dispatch({
+      type: 'CART_UPDATE_ORDER_SUMMARY',
+      payload: {
+        numberOfItems,
+        subTotal,
+        tax,
+        total,
+      },
+    })
   }, [state.cart])
 
   const addProduct = (product) => {

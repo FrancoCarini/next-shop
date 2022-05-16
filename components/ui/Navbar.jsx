@@ -14,11 +14,13 @@ import {
 import { SearchOutlined, ShoppingCartOutlined } from '@mui/icons-material'
 
 import UiContext from '@/context/ui/UiContext'
+import CartContext from '@/context/cart/CartContext'
 
 const Navbar = () => {
   const { asPath } = useRouter()
 
   const { toogleSideMenu } = useContext(UiContext)
+  const { numberOfItems } = useContext(CartContext)
 
   return (
     <AppBar>
@@ -59,7 +61,7 @@ const Navbar = () => {
         <NextLink href="/cart" passHref>
           <Link>
             <IconButton>
-              <Badge badgeContent={2} color="secondary">
+              <Badge badgeContent={numberOfItems} color="secondary">
                 <ShoppingCartOutlined />
               </Badge>
             </IconButton>

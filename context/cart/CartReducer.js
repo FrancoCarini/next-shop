@@ -63,6 +63,11 @@ const CartReducer = (state, action) => {
             )
         ),
       }
+    case 'CART_UPDATE_ORDER_SUMMARY':
+      return {
+        ...state,
+        ...action.payload,
+      }
     default:
       return state
   }
