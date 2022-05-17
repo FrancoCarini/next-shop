@@ -1,6 +1,7 @@
 import { connect, disconnect } from '@/database/db'
-import { initialData } from '@/database/products'
+import { initialData } from '@/database/seeder'
 import Product from '@/models/Product'
+import User from '@/models/User'
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
@@ -14,6 +15,9 @@ export default async function handler(req, res) {
 
     await Product.deleteMany()
     await Product.insertMany(initialData.products)
+
+    await User.deleteMany()
+    await User.insertMany(initialData.users)
 
     await disconnect()
     res.status(200).json({ message: 'Data Inserted' })
