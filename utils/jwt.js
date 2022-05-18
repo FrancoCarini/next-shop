@@ -1,3 +1,4 @@
+import { promisify } from 'util'
 import jwt from 'jsonwebtoken'
 
 export const signToken = (_id, email) => {
@@ -15,4 +16,8 @@ export const signToken = (_id, email) => {
       expiresIn: '30d',
     }
   )
+}
+
+export const isValidToken = async (token) => {
+  return await promisify(jwt.verify)(token, process.env.JWT_SECRET)
 }
