@@ -1,6 +1,5 @@
 import { connect, disconnect } from '@/database/db'
 import User from '@/models/User'
-import bcrypt from 'bcryptjs'
 
 import { signToken } from '@/utils/jwt'
 
@@ -13,8 +12,11 @@ export default async function handler(req, res) {
       email,
       password,
       name,
+      role: 'client',
     })
     await disconnect()
+
+    const { _id, role } = user
 
     const token = signToken(_id, email)
 
