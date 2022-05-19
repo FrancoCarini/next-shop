@@ -1,4 +1,5 @@
 import { useReducer, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import axios from 'axios'
 import Cookie from 'js-cookie'
 
@@ -11,12 +12,17 @@ const AuthProvider = ({ children }) => {
     user: undefined,
   }
   const [state, dispatch] = useReducer(AuthReducer, initialState)
+  const router = useRouter()
 
   useEffect(() => {
     checkToken()
   }, [])
 
   const checkToken = async () => {
+    if (!Cookie.get('token')) {
+      return
+    }
+
     try {
       const { data } = await axios.get('/api/users/validate-token')
       const { token, user } = data
@@ -84,8 +90,14 @@ const AuthProvider = ({ children }) => {
     }
   }
 
+  const logout = () => {
+    Cookie.remove('token')
+    Cookie.remove('cart')
+    router.reload()
+  }
+
   return (
-    <AuthContext.Provider value={{ ...state, login, registerUser }}>
+    <AuthContext.Provider value={{ ...state, login, registerUser, logout }}>
       {children}
     </AuthContext.Provider>
   )

@@ -40,7 +40,9 @@ const LoginPage = () => {
       }, 3000)
       return
     }
-    router.replace('/')
+
+    const destination = router.query.p?.toString() || '/'
+    router.replace(destination)
   }
 
   return (
