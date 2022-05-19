@@ -12,7 +12,6 @@ import {
 } from '@mui/material'
 import { ErrorOutline } from '@mui/icons-material'
 import { useForm } from 'react-hook-form'
-import axios from 'axios'
 
 import AuthLayout from '@/components/layouts/AuthLayout'
 import AuthContext from '@/context/auth/AuthContext'
@@ -108,7 +107,14 @@ const LoginPage = () => {
               </Button>
             </Grid>
             <Grid item xs={12} display="flex" justifyContent="end">
-              <NextLink href="/auth/register" passHref>
+              <NextLink
+                href={
+                  router.query.p
+                    ? `/auth/register?p=${router.query.p}`
+                    : '/auth/register'
+                }
+                passHref
+              >
                 <Link underline="always">Dont have an account? Register</Link>
               </NextLink>
             </Grid>
