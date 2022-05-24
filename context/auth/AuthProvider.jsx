@@ -32,7 +32,7 @@ const AuthProvider = ({ children }) => {
         payload: user,
       })
     } catch (error) {
-      Cookies.remove('token')
+      Cookie.remove('token')
     }
   }
 

@@ -11,6 +11,8 @@ import {
   Button,
 } from '@mui/material'
 
+import countries from '@/utils/countries'
+
 const AddressPage = () => {
   return (
     <ShopLayout title="Address" pageDescription={'Confirm address'}>
@@ -38,8 +40,11 @@ const AddressPage = () => {
           <FormControl fullWidth>
             <InputLabel>Country</InputLabel>
             <Select variant="filled" label="Country" value={1}>
-              <MenuItem value={1}>Argentina</MenuItem>
-              <MenuItem value={2}>Uruguay</MenuItem>
+              {countries.map((country) => (
+                <MenuItem key={country.code} value={country.code}>
+                  {country.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>

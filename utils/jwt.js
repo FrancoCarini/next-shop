@@ -1,9 +1,8 @@
-import { promisify } from 'util'
 import jwt from 'jsonwebtoken'
 
 export const signToken = (_id, email) => {
   if (!process.env.JWT_SECRET) {
-    throw new Error('Theres no JWT Secret defined')
+    throw new Error('Theres no JWT Secret defined in conf')
   }
 
   return jwt.sign(
@@ -19,5 +18,15 @@ export const signToken = (_id, email) => {
 }
 
 export const isValidToken = async (token) => {
-  return await promisify(jwt.verify)(token, process.env.JWT_SECRET)
+  return new Promise((resolve, reject) => {
+    try {
+      jwt.verify(token, process.env.JWT_SECRET_SEED || '', (err, payload) => {
+        if (err) return reject('JWT is not valid')
+        const { _id } = payload
+        resolve(_id)
+      })
+    } catch (error) {
+      reject('JWT is not valid')
+    }
+  })
 }

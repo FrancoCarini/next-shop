@@ -6,6 +6,7 @@ import CartReducer from './CartReducer'
 
 const CartProvider = ({ children }) => {
   const initialState = {
+    isLoaded: false,
     cart: Cookie.get('cart') ? JSON.parse(Cookie.get('cart')) : [],
     numberOfItems: 0,
     subTotal: 0,

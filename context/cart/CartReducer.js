@@ -1,8 +1,10 @@
 const CartReducer = (state, action) => {
   switch (action.type) {
-    case 'CART_LOAD_CART':
+    case 'CART_LOAD_FROM_COOKIE':
       return {
         ...state,
+        isLoaded: true,
+        cart: [...action.payload],
       }
     case 'CART_ADD_PRODUCT':
       const itemToAdd = action.payload
