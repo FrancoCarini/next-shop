@@ -12,6 +12,7 @@ const CartProvider = ({ children }) => {
     subTotal: 0,
     tax: 0,
     total: 0,
+    shippingAddress: undefined,
   }
   const [state, dispatch] = useReducer(CartReducer, initialState)
 
@@ -22,6 +23,25 @@ const CartProvider = ({ children }) => {
       type: 'CART_LOAD_FROM_COOKIE',
       payload: cookieCart,
     })
+  }, [])
+
+  useEffect(() => {
+    if (Cookie.get('firstName')) {
+      const shippingAddress = {
+        firstName: Cookie.get('firstName') || '',
+        lastName: Cookie.get('lastName') || '',
+        address: Cookie.get('address') || '',
+        zipCode: Cookie.get('zipCode') || '',
+        city: Cookie.get('city') || '',
+        country: Cookie.get('country') || '',
+        phone: Cookie.get('phone') || '',
+      }
+
+      dispatch({
+        type: 'CART_LOAD_ADDRESS_FROM_COOKIE',
+        payload: shippingAddress,
+      })
+    }
   }, [])
 
   useEffect(() => {
@@ -72,9 +92,32 @@ const CartProvider = ({ children }) => {
     })
   }
 
+  const updateAddress = (shippingAddress) => {
+    const { firstName, lastName, address, zipCode, city, country, phone } =
+      shippingAddress
+    Cookie.set('firstName', firstName)
+    Cookie.set('lastName', lastName)
+    Cookie.set('address', address)
+    Cookie.set('zipCode', zipCode)
+    Cookie.set('city', city)
+    Cookie.set('country', country)
+    Cookie.set('phone', phone)
+
+    dispatch({
+      type: 'CART_UPDATE_ADDRESS_FROM_COOKIE',
+      payload: shippingAddress,
+    })
+  }
+
   return (
     <CartContext.Provider
-      value={{ ...state, addProduct, updateQuantity, removeProduct }}
+      value={{
+        ...state,
+        addProduct,
+        updateQuantity,
+        removeProduct,
+        updateAddress,
+      }}
     >
       {children}
     </CartContext.Provider>

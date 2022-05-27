@@ -1,4 +1,6 @@
+import { useContext, useEffect } from 'react'
 import NextLink from 'next/link'
+import { useRouter } from 'next/router'
 import {
   Box,
   Card,
@@ -9,12 +11,26 @@ import {
   Button,
   Link,
 } from '@mui/material'
+import Cookies from 'js-cookie'
 
 import ShopLayout from '@/components/layouts/ShopLayout'
 import CartList from '@/components/cart/CartList'
 import OrderSummary from '@/components/cart/OrderSummary'
+import CartContext from '@/context/cart/CartContext'
 
 const SummaryPage = () => {
+  const { shippingAddress, numberOfItems } = useContext(CartContext)
+  const { firstName, lastName, address, zipCode, city, country, phone } =
+    shippingAddress
+
+  const router = useRouter()
+
+  useEffect(() => {
+    if (Cookies.get('firstName')) {
+      router.push('/checkout/address')
+    }
+  }, [router])
+
   return (
     <ShopLayout title="Cart Summary" pageDescription={'Order Summary'}>
       <Typography variant="h1" component="h1" sx={{ mb: 2 }}>
@@ -27,7 +43,9 @@ const SummaryPage = () => {
         <Grid item xs={12} sm={5}>
           <Card className="summary-card">
             <CardContent>
-              <Typography variant="h2">Summary (3 products)</Typography>
+              <Typography variant="h2">
+                Summary ({numberOfItems} products)
+              </Typography>
               <Divider sx={{ my: 1 }} />
 
               <Box display="flex" justifyContent="space-between">
@@ -37,11 +55,15 @@ const SummaryPage = () => {
                 </NextLink>
               </Box>
 
-              <Typography>Franco Carini</Typography>
-              <Typography>Cabildo 2222</Typography>
-              <Typography>Ciudad de Buenos Aires, 1428</Typography>
-              <Typography>Argentina</Typography>
-              <Typography>+5491154646464654</Typography>
+              <Typography>
+                {firstName} {lastName}
+              </Typography>
+              <Typography>{address}</Typography>
+              <Typography>
+                {city}, {zipCode}
+              </Typography>
+              <Typography>{country}</Typography>
+              <Typography>{phone}</Typography>
 
               <Divider sx={{ my: 1 }} />
 

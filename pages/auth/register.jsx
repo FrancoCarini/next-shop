@@ -12,6 +12,7 @@ import {
 } from '@mui/material'
 import { ErrorOutline } from '@mui/icons-material'
 import { useForm } from 'react-hook-form'
+import { signIn, getSession } from 'next-auth/react'
 
 import AuthContext from '@/context/auth/AuthContext'
 import AuthLayout from '@/components/layouts/AuthLayout'
@@ -40,8 +41,7 @@ const RegisterPage = () => {
       return
     }
 
-    const destination = router.query.p?.toString() || '/'
-    router.replace(destination)
+    signIn('credentials', { email, password })
   }
 
   return (
@@ -139,6 +139,25 @@ const RegisterPage = () => {
       </form>
     </AuthLayout>
   )
+}
+
+export const getServerSideProps = async ({ req, query }) => {
+  const session = await getSession(req)
+
+  const { p = '/' } = query
+
+  if (session) {
+    return {
+      redirect: {
+        destination: p.toString(),
+        permanent: false,
+      },
+    }
+  }
+
+  return {
+    props: {},
+  }
 }
 
 export default RegisterPage

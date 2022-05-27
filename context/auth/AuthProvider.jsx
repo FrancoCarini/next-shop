@@ -1,4 +1,5 @@
 import { useReducer, useEffect } from 'react'
+import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import Cookie from 'js-cookie'
@@ -12,29 +13,17 @@ const AuthProvider = ({ children }) => {
     user: undefined,
   }
   const [state, dispatch] = useReducer(AuthReducer, initialState)
+  const { data, status } = useSession()
   const router = useRouter()
 
   useEffect(() => {
-    checkToken()
-  }, [])
-
-  const checkToken = async () => {
-    if (!Cookie.get('token')) {
-      return
-    }
-
-    try {
-      const { data } = await axios.get('/api/users/validate-token')
-      const { token, user } = data
-      Cookie.set('token', token)
+    if (status === 'authenticated') {
       dispatch({
         type: 'AUTH_LOGIN',
-        payload: user,
+        payload: data?.user,
       })
-    } catch (error) {
-      Cookie.remove('token')
     }
-  }
+  }, [status, data])
 
   // Methods
   const login = async (email, password) => {
@@ -91,9 +80,16 @@ const AuthProvider = ({ children }) => {
   }
 
   const logout = () => {
-    Cookie.remove('token')
     Cookie.remove('cart')
-    router.reload()
+    Cookie.remove('firstName')
+    Cookie.remove('lastName')
+    Cookie.remove('address')
+    Cookie.remove('address2')
+    Cookie.remove('zip')
+    Cookie.remove('city')
+    Cookie.remove('country')
+    Cookie.remove('phone')
+    signOut()
   }
 
   return (

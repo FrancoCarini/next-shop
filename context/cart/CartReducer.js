@@ -70,6 +70,12 @@ const CartReducer = (state, action) => {
         ...state,
         ...action.payload,
       }
+    case 'CART_LOAD_ADDRESS_FROM_COOKIE':
+    case 'CART_UPDATE_ADDRESS_FROM_COOKIE':
+      return {
+        ...state,
+        shippingAddress: action.payload,
+      }
     default:
       return state
   }
