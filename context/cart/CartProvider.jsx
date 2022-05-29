@@ -1,5 +1,6 @@
 import { useReducer, useEffect } from 'react'
 import Cookie from 'js-cookie'
+import axios from 'axios'
 
 import CartContext from './CartContext'
 import CartReducer from './CartReducer'
@@ -109,6 +110,46 @@ const CartProvider = ({ children }) => {
     })
   }
 
+  const createOrder = async () => {
+    if (!state.shippingAddress) {
+      throw new Error('Theres no shipping address')
+    }
+
+    const orderBody = {
+      items: state.cart,
+      shippingAddress: state.shippingAddress,
+      numberOfItems: state.numberOfItems,
+      subTotal: state.subTotal,
+      tax: state.tax,
+      total: state.total,
+      isPaid: false,
+    }
+
+    try {
+      const { data } = await axios.post('/api/orders', orderBody)
+      dispatch({
+        type: 'CART_ORDER_COMPLETED',
+      })
+
+      return {
+        hasError: false,
+        message: data._id,
+      }
+    } catch (error) {
+      if (axios.isAxiosError) {
+        return {
+          hasError: true,
+          message: error.response.data.message,
+        }
+      }
+
+      return {
+        hasError: true,
+        message: 'An error has occurred, please try again',
+      }
+    }
+  }
+
   return (
     <CartContext.Provider
       value={{
@@ -117,6 +158,7 @@ const CartProvider = ({ children }) => {
         updateQuantity,
         removeProduct,
         updateAddress,
+        createOrder,
       }}
     >
       {children}

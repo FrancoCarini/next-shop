@@ -76,6 +76,15 @@ const CartReducer = (state, action) => {
         ...state,
         shippingAddress: action.payload,
       }
+    case 'CART_ORDER_COMPLETED':
+      return {
+        ...state,
+        cart: [],
+        numberOfItems: 0,
+        subTotal: 0,
+        tax: 0,
+        total: 0,
+      }
     default:
       return state
   }
