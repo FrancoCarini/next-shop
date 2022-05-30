@@ -12,7 +12,7 @@ import {
 import ItemCounter from '../ui/ItemCounter'
 import CartContext from '@/context/cart/CartContext'
 
-const CartList = ({ editable }) => {
+const CartList = ({ editable = false, products = [] }) => {
   const { cart, updateQuantity, removeProduct } = useContext(CartContext)
 
   const newProductQuantity = (product, newQuantity) => {
@@ -24,9 +24,11 @@ const CartList = ({ editable }) => {
     removeProduct(product)
   }
 
+  const productsToShow = products.length ? products : cart
+
   return (
     <Fragment>
-      {cart.map((product) => (
+      {productsToShow.map((product) => (
         <Grid
           key={`${product.slug}-${product.size}`}
           container
