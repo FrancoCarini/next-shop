@@ -1,5 +1,7 @@
-import NextLink from 'next/link'
+import { useState } from 'react'
 import { getSession } from 'next-auth/react'
+import axios from 'axios'
+import { useRouter } from 'next/router'
 import {
   Box,
   Card,
@@ -7,10 +9,11 @@ import {
   Grid,
   Typography,
   Divider,
-  Link,
   Chip,
+  CircularProgress,
 } from '@mui/material'
 import { CreditCardOffOutlined, CreditScoreOutlined } from '@mui/icons-material'
+import { PayPalButtons } from '@paypal/react-paypal-js'
 
 import ShopLayout from '@/components/layouts/ShopLayout'
 import CartList from '@/components/cart/CartList'
@@ -19,6 +22,30 @@ import { connect, disconnect } from '@/database/db'
 import Order from '@/models/Order'
 
 const OrderPage = ({ order }) => {
+  const [isPaying, setisPaying] = useState(false)
+  const router = useRouter()
+
+  const onOrderCompleted = async (details) => {
+    if (details.status !== 'COMPLETED') {
+      return alert('There is no payment in PayPal')
+    }
+
+    setisPaying(true)
+
+    try {
+      const { data } = await axios.post('/orders/pay', {
+        transactionId: details.id,
+        orderId: order._id,
+      })
+
+      router.reload()
+    } catch (error) {
+      setisPaying(false)
+      console.log(error)
+      alert('Error')
+    }
+  }
+
   return (
     <ShopLayout title="Order Summary" pageDescription={'Order Summary'}>
       <Typography variant="h1" component="h1" sx={{ mb: 2 }}>
@@ -28,18 +55,18 @@ const OrderPage = ({ order }) => {
       {order.isPaid ? (
         <Chip
           sx={{ my: 2 }}
-          label="Payment Pending"
-          variant="outlined"
-          color="error"
-          icon={<CreditCardOffOutlined />}
-        />
-      ) : (
-        <Chip
-          sx={{ my: 2 }}
           label="Already Paid"
           variant="outlined"
           color="success"
           icon={<CreditScoreOutlined />}
+        />
+      ) : (
+        <Chip
+          sx={{ my: 2 }}
+          label="Payment Pending"
+          variant="outlined"
+          color="error"
+          icon={<CreditCardOffOutlined />}
         />
       )}
 
@@ -82,6 +109,15 @@ const OrderPage = ({ order }) => {
               />
 
               <Box sx={{ mt: 3 }} display="flex" flexDirection="column">
+                {isPaying && (
+                  <Box
+                    display="flex"
+                    justifyContent="center"
+                    className="fadeIn"
+                  >
+                    <CircularProgress />
+                  </Box>
+                )}
                 {order.isPaid ? (
                   <Chip
                     sx={{ my: 2 }}
@@ -91,7 +127,24 @@ const OrderPage = ({ order }) => {
                     icon={<CreditScoreOutlined />}
                   />
                 ) : (
-                  <h1>Pagar</h1>
+                  <PayPalButtons
+                    createOrder={(data, actions) => {
+                      return actions.order.create({
+                        purchase_units: [
+                          {
+                            amount: {
+                              value: `${order.total}`,
+                            },
+                          },
+                        ],
+                      })
+                    }}
+                    onApprove={(data, actions) => {
+                      return actions.order.capture().then((details) => {
+                        onOrderCompleted(details)
+                      })
+                    }}
+                  />
                 )}
               </Box>
             </CardContent>

@@ -8,7 +8,6 @@ export default async function handler(req, res) {
   switch (req.method) {
     case 'POST':
       const { items, total } = req.body
-
       // Verify user session
       const session = await getSession({ req })
       if (!session) {
@@ -46,7 +45,12 @@ export default async function handler(req, res) {
         // }
 
         const userId = session.user._id
-        const newOrder = new Order({ ...req.body, isPaid: false, user: userId })
+        const newOrder = new Order({
+          ...req.body,
+          isPaid: false,
+          user: userId,
+          total: Math.round(total * 100) / 100,
+        })
         await newOrder.save()
         await disconnect()
         return res.status(200).json(newOrder)
