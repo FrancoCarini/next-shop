@@ -1,7 +1,7 @@
 services:
   db:
     image: mongo:5.0.0
-    container_name: ellipsis_database
+    container_name: tesloshop_database
     ports:
       - 27017:27017
     volumes:
